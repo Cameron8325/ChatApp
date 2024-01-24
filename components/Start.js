@@ -7,7 +7,7 @@ const Start = ({ navigation }) => {
 
   const imgBackground = require('../img/bg-img.png')
 
-  
+
   const handleStartChatting = () => {
     // Handle navigation or other actions here
     navigation.navigate('Chat', { name: name, backgroundColor: background });
@@ -40,6 +40,10 @@ const Start = ({ navigation }) => {
                     onPress={() => {
                       setBackground(styles.colorInput1.backgroundColor);
                     }}
+                    accessible={true}
+                    accessibilityLabel="Choose black background"
+                    accessibilityHint="Select to set the background color to black."
+                    accessibilityRole="button"
                   ></TouchableOpacity>
 
                   <TouchableOpacity
@@ -47,6 +51,10 @@ const Start = ({ navigation }) => {
                     onPress={() => {
                       setBackground(styles.colorInput2.backgroundColor);
                     }}
+                    accessible={true}
+                    accessibilityLabel="Choose dark gray background"
+                    accessibilityHint="Select to set the background color to dark gray."
+                    accessibilityRole="button"
                   ></TouchableOpacity>
 
                   <TouchableOpacity
@@ -54,6 +62,10 @@ const Start = ({ navigation }) => {
                     onPress={() => {
                       setBackground(styles.colorInput3.backgroundColor);
                     }}
+                    accessible={true}
+                    accessibilityLabel="Choose light gray background"
+                    accessibilityHint="Select to set the background color to light gray."
+                    accessibilityRole="button"
                   ></TouchableOpacity>
 
                   <TouchableOpacity
@@ -61,6 +73,10 @@ const Start = ({ navigation }) => {
                     onPress={() => {
                       setBackground(styles.colorInput4.backgroundColor);
                     }}
+                    accessible={true}
+                    accessibilityLabel="Choose beige background"
+                    accessibilityHint="Select to set the background color to beige."
+                    accessibilityRole="button"
                   ></TouchableOpacity>
                 </View>
               </View>
