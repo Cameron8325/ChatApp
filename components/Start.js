@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { StyleSheet, View, Text, Button, TextInput, ImageBackground, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 
-const Screen1 = ({ navigation }) => {
+const Start = ({ navigation }) => {
   const [name, setName] = useState('');
   const [background, setBackground] = useState();
 
@@ -10,15 +10,15 @@ const Screen1 = ({ navigation }) => {
   
   const handleStartChatting = () => {
     // Handle navigation or other actions here
-    navigation.navigate('Screen2', { name: name, backgroundColor: background });
+    navigation.navigate('Chat', { name: name, backgroundColor: background });
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'android' ? 'padding' : 'height'}
         style={styles.container}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -150} // Adjust the offset as needed
+        keyboardVerticalOffset={Platform.OS === 'android' ? 0 : -150} // Adjust the offset as needed
       >
         <View style={styles.container}>
           <ImageBackground source={imgBackground} style={styles.image}>
@@ -170,4 +170,4 @@ const styles = StyleSheet.create({
 
 
 
-export default Screen1;
+export default Start;
