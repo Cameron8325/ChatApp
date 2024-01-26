@@ -8,6 +8,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
+import { useEffect } from 'react';
+
 
 
 // Create the navigator
@@ -25,8 +27,7 @@ const App = () => {
   };
 
   const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
+  const db = getFirestore(app);
 
   return (
     <NavigationContainer>
@@ -40,7 +41,7 @@ const analytics = getAnalytics(app);
         <Stack.Screen
           name="Chat"
           >
-          {props => <Chat isConnected={connectionStatus.isConnected} db={db} storage={storage} {...props} />}
+          {props => <Chat db={db} {...props} />}
           </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
