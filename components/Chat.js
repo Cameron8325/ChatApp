@@ -1,39 +1,59 @@
 import { useEffect, useState } from 'react';
-import { Bubble, GiftedChat } from 'react-native-gifted-chat';
-import { StyleSheet, View, Platform, KeyboardAvoidingView } from 'react-native';
+import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
+import { StyleSheet, View, Platform, KeyboardAvoidingView, Alert } from 'react-native';
 import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-const Chat = ({ route, navigation, db }) => {
+const Chat = ({ route, navigation, db, isConnected }) => {
   const [messages, setMessages] = useState([]);
   const { name, backgroundColor, id } = route.params;
 
   useEffect(() => {
     navigation.setOptions({ title: name });
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-    const unsubMessages = onSnapshot(q, (docs) => {
-      let newMessages = [];
-      docs.forEach(doc => {
-        newMessages.push({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: new Date(doc.data().createdAt.toMillis())
+    
+    if (isConnected) {
+      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+      const unsubMessages = onSnapshot(q, (docs) => {
+        let newMessages = [];
+        docs.forEach(doc => {
+          newMessages.push({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: new Date(doc.data().createdAt.toMillis())
+          });
+        });
+        setMessages(newMessages);
+        // Cache messages in AsyncStorage
+        AsyncStorage.setItem('cachedMessages', JSON.stringify(newMessages));
+      });
+
+      return () => {
+        if (unsubMessages) unsubMessages();
+      };
+    } else {
+      // Load cached messages from AsyncStorage when offline
+      AsyncStorage.getItem('cachedMessages')
+        .then((cachedMessages) => {
+          if (cachedMessages) {
+            setMessages(JSON.parse(cachedMessages));
+          }
         })
-      })
-      setMessages(newMessages);
-    })
-    return () => {
-      if (unsubMessages) unsubMessages();
+        .catch((error) => {
+          console.error("Error loading cached messages:", error);
+        });
     }
-   }, []);
+  }, [isConnected]);
 
   const onSend = (newMessages) => {
-    addDoc(collection(db, "messages"), newMessages[0])
-  }
-
-  useEffect(() => {
-    navigation.setOptions({ title: name });
-  }, []);
+    if (isConnected) {
+      addDoc(collection(db, "messages"), newMessages[0])
+        .catch((error) => {
+          console.error("Error adding message:", error);
+        });
+    } else {
+      Alert.alert("You are currently offline. Message will be sent when online.");
+    }
+  };
 
   const renderBubble = (props) => {
     return <Bubble
@@ -46,8 +66,13 @@ const Chat = ({ route, navigation, db }) => {
           backgroundColor: "#FFF"
         }
       }}
-    />
-  }
+    />;
+  };
+
+  const renderInputToolbar = (props) => {
+    if (isConnected) return <InputToolbar {...props} />;
+    else return null;
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor }}>
@@ -59,8 +84,9 @@ const Chat = ({ route, navigation, db }) => {
           _id: id,
           name
         }}
+        renderInputToolbar={renderInputToolbar}
       />
-      { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
+      {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
     </View>
   );
 };
