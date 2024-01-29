@@ -9,11 +9,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp } from "firebase/app";
 import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useNetInfo } from '@react-native-community/netinfo';
 
-import * as ImagePicker from 'expo-image-picker';
+import { getStorage } from "firebase/storage";
 
 
 
@@ -21,6 +21,7 @@ import * as ImagePicker from 'expo-image-picker';
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+
   const connectionStatus = useNetInfo();
 
   const firebaseConfig = {
@@ -35,6 +36,7 @@ const App = () => {
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
   //Network Status
   useEffect(() => {
@@ -59,7 +61,11 @@ const App = () => {
         <Stack.Screen
           name="Chat"
         >
-          {props => <Chat isConnected={connectionStatus.isConnected} db={db} {...props} />}
+          {props => <Chat 
+          isConnected={connectionStatus.isConnected}
+          db={db}
+          storage={storage}
+          {...props} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

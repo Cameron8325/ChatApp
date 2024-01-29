@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import { StyleSheet, View, Platform, KeyboardAvoidingView, Alert } from 'react-native';
-import { collection, addDoc, onSnapshot, query, orderBy } from "firebase/firestore";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapView from 'react-native-maps';
+import CustomActions from './CustomActions';
 
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const [messages, setMessages] = useState([]);
   const { name, backgroundColor, id } = route.params;
 
@@ -70,26 +72,52 @@ const Chat = ({ route, navigation, db, isConnected }) => {
   };
 
   const renderInputToolbar = (props) => {
-    if (isConnected) return <InputToolbar {...props} />;
+    if (isConnected === true) return <InputToolbar {...props} />;
     else return null;
   };
 
-  return (
-    <View style={{ flex: 1, backgroundColor }}>
-      <GiftedChat
-        messages={messages}
-        renderBubble={renderBubble}
-        onSend={messages => onSend(messages)}
-        user={{
-          _id: id,
-          name
-        }}
-        renderInputToolbar={renderInputToolbar}
-      />
-      {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
-    </View>
-  );
-};
+      // Render an action button in Inputfield
+    const renderCustomActions = (props) => {
+      return <CustomActions storage={storage} {...props} />;
+    };
+
+    // Render a MapView if the currentMessage contains location data
+    const renderCustomView = (props) => {
+      const { currentMessage } = props;
+      if (currentMessage.location) {
+        return (
+            <MapView 
+              style={{ width: 150, height: 100, margin: 6 }}
+              region={{
+                latitude: currentMessage.location.latitude,
+                longitude: currentMessage.location.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+            />
+        );
+      }
+      return null;
+    };
+
+    return (
+      <View style={{ flex: 1, backgroundColor }}>
+        <GiftedChat
+          messages={messages}
+          renderBubble={renderBubble}
+          renderInputToolbar={renderInputToolbar}
+          onSend={messages => onSend(messages)}
+          renderActions={(props) => <CustomActions storage={storage} userID={id} {...props} />}
+          renderCustomView={renderCustomView}
+          user={{
+            _id: id,
+            name
+          }}
+        />
+        {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
+      </View>
+    );
+  };
 
 const styles = StyleSheet.create({
   container: {
