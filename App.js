@@ -13,6 +13,8 @@ import { useEffect } from 'react';
 
 import { useNetInfo } from '@react-native-community/netinfo';
 
+import * as ImagePicker from 'expo-image-picker';
+
 
 
 // Create the navigator
