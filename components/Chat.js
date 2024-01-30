@@ -8,13 +8,11 @@ import CustomActions from './CustomActions';
 
 const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const [messages, setMessages] = useState([]);
-  const { name, backgroundColor, userID } = route.params;
+  const { name, backgroundColor, id } = route.params;
 
   useEffect(() => {
     navigation.setOptions({ title: name });
-  }, []);
-
-  useEffect(() => {    
+    
     if (isConnected) {
       const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
       const unsubMessages = onSnapshot(q, (docs) => {
@@ -47,8 +45,6 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
         });
     }
   }, [isConnected]);
-
-  
 
   const onSend = (newMessages) => {
     if (isConnected) {
@@ -105,16 +101,16 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     };
 
     return (
-      <View style={[styles.container, { flex: 1, backgroundColor }]}>
+      <View style={{ flex: 1, backgroundColor }}>
         <GiftedChat
           messages={messages}
           renderBubble={renderBubble}
           renderInputToolbar={renderInputToolbar}
           onSend={messages => onSend(messages)}
-          renderActions={renderCustomActions}
+          renderActions={(props) => <CustomActions storage={storage} userID={id} {...props} />}
           renderCustomView={renderCustomView}
           user={{
-            _id: userID,
+            _id: id,
             name
           }}
         />
@@ -123,10 +119,17 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     );
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-  });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+});
 
 export default Chat;

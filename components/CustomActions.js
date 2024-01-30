@@ -39,14 +39,22 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID })
     if (permissions?.granted) {
       const location = await Location.getCurrentPositionAsync({});
       if (location) {
-        onSend({
+        const locationMessage = {
+          _id: userID,
+          text: '',
+          createdAt: new Date(),
           location: {
             longitude: location.coords.longitude,
             latitude: location.coords.latitude,
           },
-        });
-      } else Alert.alert("Error occurred while fetching location");
-    } else Alert.alert("Permissions haven't been granted.");
+        };
+        onSend([locationMessage]);
+      } else {
+        Alert.alert("Error occurred while fetching location");
+      }
+    } else {
+      Alert.alert("Permissions to access location haven't been granted.");
+    }
   };
 
   const generateReference = (uri) => {
