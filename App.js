@@ -9,7 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp } from "firebase/app";
 import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { useNetInfo } from '@react-native-community/netinfo';
 
@@ -23,6 +23,16 @@ const Stack = createNativeStackNavigator();
 const App = () => {
 
   const connectionStatus = useNetInfo();
+  
+  //Network Status
+  useEffect(() => {
+    if (connectionStatus.isConnected === false) {
+      Alert.alert("Connection Lost!!");
+      disableNetwork(db);
+    } else if (connectionStatus.isConnected === true) {
+      enableNetwork(db);
+    }
+  }, [connectionStatus.isConnected])
 
   const firebaseConfig = {
     apiKey: "AIzaSyAAblow31iPnpTIJDUmp_08zsj4UE9LRfg",
@@ -38,15 +48,6 @@ const App = () => {
   const db = getFirestore(app);
   const storage = getStorage(app);
 
-  //Network Status
-  useEffect(() => {
-    if (connectionStatus.isConnected === false) {
-      Alert.alert("Connection Lost!!");
-      disableNetwork(db);
-    } else if (connectionStatus.isConnected === true) {
-      enableNetwork(db);
-    }
-  }, [connectionStatus.isConnected])
 
 
   return (
@@ -61,7 +62,7 @@ const App = () => {
         <Stack.Screen
           name="Chat"
         >
-          {props => <Chat 
+          {(props) => <Chat 
           isConnected={connectionStatus.isConnected}
           db={db}
           storage={storage}

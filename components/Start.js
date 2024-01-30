@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Start = ({ navigation }) => {
   const auth = getAuth();
@@ -15,7 +14,7 @@ const Start = ({ navigation }) => {
   const signInUser = () => {
     signInAnonymously(auth)
       .then(result => {
-        navigation.navigate("Chat", { name: name, backgroundColor: background, id: result.user.uid });
+        navigation.navigate("Chat", { name: name, backgroundColor: background, userID: result.user.uid });
         Alert.alert("Signed in Successfully!");
       })
       .catch((error) => {
