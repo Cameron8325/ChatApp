@@ -18,9 +18,10 @@ const Start = ({ navigation }) => {
         Alert.alert("Signed in Successfully!");
       })
       .catch((error) => {
-        Alert.alert("Unable to sign in, try later again.");
-      })
-  }
+        console.error("Error signing in:", error);
+        Alert.alert("Unable to sign in, try again later.");
+      });
+  };
 
 
   return (

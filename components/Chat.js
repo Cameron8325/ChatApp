@@ -55,6 +55,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
       addDoc(collection(db, "messages"), newMessages[0])
         .catch((error) => {
           console.error("Error adding message:", error);
+          Alert.alert("Error sending message. Please try again.");
         });
     } else {
       Alert.alert("You are currently offline. Message will be sent when online.");
