@@ -10,41 +10,50 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const [messages, setMessages] = useState([]);
   const { name, backgroundColor, id } = route.params;
 
+  let unsubMessages;
+
   useEffect(() => {
     navigation.setOptions({ title: name });
-    
-    if (isConnected) {
+  }, []);
+
+  useEffect(() => {
+    if (isConnected === true) {
+      if (unsubMessages) unsubMessages();
+      unsubMessages = null;
+
       const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-      const unsubMessages = onSnapshot(q, (docs) => {
+      unsubMessages = onSnapshot(q, (docs) => {
         let newMessages = [];
-        docs.forEach(doc => {
+        docs.forEach((doc) => {
           newMessages.push({
-            id: doc.id,
+            _id: doc.id,
             ...doc.data(),
-            createdAt: new Date(doc.data().createdAt.toMillis())
+            createdAt: new Date(doc.data().createdAt.toMillis()),
           });
         });
+        cacheMessages(newMessages);
         setMessages(newMessages);
-        // Cache messages in AsyncStorage
-        AsyncStorage.setItem('cachedMessages', JSON.stringify(newMessages));
       });
-
-      return () => {
-        if (unsubMessages) unsubMessages();
-      };
-    } else {
-      // Load cached messages from AsyncStorage when offline
-      AsyncStorage.getItem('cachedMessages')
-        .then((cachedMessages) => {
-          if (cachedMessages) {
-            setMessages(JSON.parse(cachedMessages));
-          }
-        })
-        .catch((error) => {
-          console.error("Error loading cached messages:", error);
-        });
-    }
+    } else loadCachedMessages();
+    return () => {
+      if (unsubMessages) {
+        unsubMessages();
+      }
+    };
   }, [isConnected]);
+
+  const loadCachedMessages = async () => {
+    const cachedMessages = (await AsyncStorage.getItem("messages")) || [];
+    setMessages(JSON.parse(cachedMessages));
+  };
+
+  const cacheMessages = async (messagesToCache) => {
+    try {
+      await AsyncStorage.setItem("messages", JSON.stringify(messagesToCache));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   const onSend = (newMessages) => {
     if (isConnected) {
