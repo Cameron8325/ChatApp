@@ -29,7 +29,6 @@ const Start = ({ navigation }) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -150} // Adjust the offset as needed
       >
         <View style={styles.container}>
           <ImageBackground source={imgBackground} style={styles.image}>
