@@ -39,5 +39,56 @@ The app adheres to the provided screen design, ensuring a visually cohesive and 
 #### Codebase Comments
 To enhance code readability and maintainability, the app's codebase is well-commented, providing insights into the functionality and logic behind each segment.
 
+## Setup Instructions
+
+### Development Environment
+
+1. Install Node.js: [Node.js](https://nodejs.org/)
+
+2. Install Expo CLI globally:
+
+    ```bash
+    npm install -g expo-cli
+    ```
+
+3. Install Expo Go on your mobile device from the App Store (for iOS) or Google Play (for Android).
+
+4. Clone the repository:
+
+    ```bash
+    git clone [<repository-url>](https://github.com/Cameron8325/ChatApp)
+    cd react-native-chat-app
+    ```
+
+5. Install dependencies:
+
+    ```bash
+    npm install
+    ```
+
+6. Start the Expo development server:
+
+    ```bash
+    npm start
+    ```
+
+7. Scan the QR code using the Expo Go app on your mobile device to view the app.
+
+### Database Configuration
+
+1. Set up a project in Firebase: [Firebase Console](https://console.firebase.google.com/)
+
+2. Create a Firestore Database and note the credentials.
+
+3. Replace the placeholder values in the `firebaseConfig` object in `App.js` with your Firebase project credentials.
+
+### Necessary Libraries
+
+1. Install required libraries using npm:
+
+    ```bash
+    npm install @react-native-community/netinfo @react-navigation/native @react-navigation/native-stack firebase react-native-gifted-chat react-native-maps expo-image-picker expo-location expo-media-library
+    ```
+
 ## Conclusion
 This React Native chat app stands as a testament to the proficiency in JavaScript mobile development, utilizing modern technologies to create a feature-rich and user-centric application.
