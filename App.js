@@ -9,10 +9,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp } from "firebase/app";
 import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
 
-import { useEffect, useState } from 'react';
-
+import { useEffect } from 'react';
 import { useNetInfo } from '@react-native-community/netinfo';
-
 import { getStorage } from "firebase/storage";
 
 
@@ -34,11 +32,12 @@ const App = () => {
     measurementId: "G-6PJF636Q4B"
   };
 
+  // Initialize Firebase app and Firestore
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const storage = getStorage(app);
 
-  //Network Status
+  //Handle the Network Status change
   useEffect(() => {
     if (connectionStatus.isConnected === false) {
       Alert.alert("Connection Lost!!");

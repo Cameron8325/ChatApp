@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { StyleSheet, View, Text, TextInput, ImageBackground, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Start = ({ navigation }) => {
   const auth = getAuth();
@@ -12,6 +11,7 @@ const Start = ({ navigation }) => {
 
   const imgBackground = require('../img/bg-img.png')
 
+  // Function to sign in user anonymously
   const signInUser = () => {
     signInAnonymously(auth)
       .then(result => {

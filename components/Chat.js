@@ -12,10 +12,12 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 
   let unsubMessages;
 
+  // Set the chat screen title to the user's name
   useEffect(() => {
     navigation.setOptions({ title: name });
   }, []);
 
+  // Effect to handle real-time updates of messages when online
   useEffect(() => {
     if (isConnected === true) {
       if (unsubMessages) unsubMessages();
@@ -31,10 +33,13 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
             createdAt: new Date(doc.data().createdAt.toMillis()),
           });
         });
+        // Cache the new messages and update the stat
         cacheMessages(newMessages);
         setMessages(newMessages);
       });
+      // Load cached messages when offline
     } else loadCachedMessages();
+    // Cleanup: Unsubscribe from real-time updates when the component is unmounted
     return () => {
       if (unsubMessages) {
         unsubMessages();
@@ -42,6 +47,7 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     };
   }, [isConnected]);
 
+  // Load cached messages if offline
   const loadCachedMessages = async () => {
     const cachedMessages = (await AsyncStorage.getItem("messages")) || [];
     setMessages(JSON.parse(cachedMessages));
@@ -85,48 +91,48 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
     else return null;
   };
 
-      // Render an action button in Inputfield
-    const renderCustomActions = (props) => {
-      return <CustomActions storage={storage} {...props} />;
-    };
+  // Render an action button in Inputfield
+  const renderCustomActions = (props) => {
+    return <CustomActions storage={storage} {...props} />;
+  };
 
-    // Render a MapView if the currentMessage contains location data
-    const renderCustomView = (props) => {
-      const { currentMessage } = props;
-      if (currentMessage.location) {
-        return (
-            <MapView 
-              style={{ width: 150, height: 100, margin: 6 }}
-              region={{
-                latitude: currentMessage.location.latitude,
-                longitude: currentMessage.location.longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
-            />
-        );
-      }
-      return null;
-    };
-
-    return (
-      <View style={{ flex: 1, backgroundColor }}>
-        <GiftedChat
-          messages={messages}
-          renderBubble={renderBubble}
-          renderInputToolbar={renderInputToolbar}
-          onSend={messages => onSend(messages)}
-          renderActions={(props) => <CustomActions storage={storage} userID={id} {...props} />}
-          renderCustomView={renderCustomView}
-          user={{
-            _id: id,
-            name
+  // Render a MapView if the currentMessage contains location data
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, margin: 6 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }}
         />
-        {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
-      </View>
-    );
+      );
+    }
+    return null;
   };
+
+  return (
+    <View style={{ flex: 1, backgroundColor }}>
+      <GiftedChat
+        messages={messages}
+        renderBubble={renderBubble}
+        renderInputToolbar={renderInputToolbar}
+        onSend={messages => onSend(messages)}
+        renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
+        user={{
+          _id: id,
+          name
+        }}
+      />
+      {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
